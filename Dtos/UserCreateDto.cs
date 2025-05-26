@@ -1,7 +1,10 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
 namespace TodoListAPI.Dtos;
 
 public record class UserCreateDto(
-    string Username,
-    string Password,
-    string Email
+    [Required]string Username,
+    [Required]string Password,
+    [Required]string Email
 );

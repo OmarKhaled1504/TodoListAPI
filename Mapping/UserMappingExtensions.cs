@@ -10,8 +10,7 @@ public static class UserMappingExtensions
     {
         return new UserDto(
             user.Username,
-            user.Email,
-            user.Todos
+            user.Email
         );
     }
 

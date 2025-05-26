@@ -6,5 +6,5 @@ namespace TodoListAPI.Services;
 
 public interface IAuthService
 {
-    public Task<ActionResult<UserDto>> RegisterAsync(UserCreateDto dto);
+    public Task<UserDto?> RegisterAsync(UserCreateDto dto);
 }

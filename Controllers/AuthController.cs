@@ -19,11 +19,13 @@ namespace TodoListAPI.Controllers
         //POST /api/auth/register
         [HttpPost]
         [Route("register")]
-        [ProducesResponseType(typeof(User), 201)]
-        public async Task<ActionResult<User>> Register(UserCreateDto dto)
+        [ProducesResponseType(typeof(UserDto), 201)]
+        [ProducesResponseType(typeof(string), 400)]
+        public async Task<ActionResult<UserDto>> Register(UserCreateDto dto)
         {
             var response = await _authService.RegisterAsync(dto);
-            return StatusCode(StatusCodes.Status201Created, response);
+
+            return response is null ? BadRequest("Username or Email already exist.") : StatusCode(201, response);
         }
 
     }

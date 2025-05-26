@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TodoListAPI.Data;
 using TodoListAPI.Dtos;
 using TodoListAPI.Entities;
@@ -18,10 +19,16 @@ public class AuthService : IAuthService
         _passwordService = passwordService;
 
     }
-    public async Task<ActionResult<UserDto>> RegisterAsync(UserCreateDto dto)
+    public async Task<UserDto?> RegisterAsync(UserCreateDto dto)
     {
+        if (await _context.Users.AnyAsync(user =>
+    user.Username == dto.Username || user.Email == dto.Email))
+        {
+            return null;
+        }
+
         User user = dto.ToEntity();
-        var hash = _passwordService.HashPassword(dto, user);
+        var hash = _passwordService.HashPassword(user, dto.Password);
         user.PasswordHash = hash;
         _context.Users.Add(user);
         await _context.SaveChangesAsync();

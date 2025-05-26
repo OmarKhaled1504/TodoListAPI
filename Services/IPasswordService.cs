@@ -6,6 +6,6 @@ namespace TodoListAPI.Services;
 
 public interface IPasswordService
 {
-    public string HashPassword(UserCreateDto dto, User user);
+    public string HashPassword(User user, string password);
 
 }
