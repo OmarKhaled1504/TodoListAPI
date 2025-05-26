@@ -10,4 +10,6 @@ public interface ITodoService
     public Task<TodoDto?> GetTodoById(int id);
     public Task<TodoDto> CreateTodoAsync(TodoCreateDto dto);
     public Task<TodoDto?> UpdateTodoAsync(int id, TodoCreateDto dto);
+    public Task<bool> DeleteTodoAsync(int id);
+
 }

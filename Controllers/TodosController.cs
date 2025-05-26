@@ -80,10 +80,35 @@ namespace TodoListAPI.Controllers
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         public async Task<ActionResult<TodoDto>> UpdateTodo(int id, TodoCreateDto dto)
-        { try
+        {
+            try
             {
                 var response = await _todoService.UpdateTodoAsync(id, dto);
                 return response is null ? NotFound() : Ok(response);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (Exception ex) when (ex.Message == "Forbidden")
+            {
+                return Forbid();
+            }
+        }
+
+        //DELETE /api/todos/1
+        [Authorize]
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> DeleteTodo(int id)
+        {
+            try
+            {
+                bool deleted = await _todoService.DeleteTodoAsync(id);
+                return deleted ? NoContent() : NotFound();
             }
             catch (UnauthorizedAccessException)
             {

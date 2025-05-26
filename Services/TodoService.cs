@@ -8,6 +8,7 @@ using TodoListAPI.Mapping;
 using System.Security.Claims;
 using BloggingAPI.Responses;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 
 namespace TodoListAPI.Services;
 
@@ -80,22 +81,45 @@ public class TodoService : ITodoService
         await _context.SaveChangesAsync();
         return todo.ToDto();
     }
+
     public async Task<TodoDto?> UpdateTodoAsync(int id, TodoCreateDto dto)
     {
         var todo = await _context.Todos.FindAsync(id);
         if (todo is null)
             return null;
-        var user = _httpContextAccessor.HttpContext?.User;
 
+        var user = _httpContextAccessor.HttpContext?.User;
         var userIdStr = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrWhiteSpace(userIdStr) || !int.TryParse(userIdStr, out int userId))
             throw new UnauthorizedAccessException("User not authenticated");
+
         if (todo.UserId != userId)
             throw new Exception("Forbidden");
         todo.Title = dto.Title;
         todo.Description = dto.Description;
         await _context.SaveChangesAsync();
         return todo.ToDto();
+    }
+
+    public async Task<bool> DeleteTodoAsync(int id)
+    {
+        var todo = await _context.Todos.FindAsync(id);
+        if (todo is null)
+        {
+            return false;
+        }
+
+        var user = _httpContextAccessor.HttpContext?.User;
+        var userIdStr = user?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrWhiteSpace(userIdStr) || !int.TryParse(userIdStr, out int userId))
+            throw new UnauthorizedAccessException("User not authenticated");
+
+        if (todo.UserId != userId)
+            throw new Exception("Forbidden");
+
+        _context.Todos.Remove(todo);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
 }
