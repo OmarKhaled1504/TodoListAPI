@@ -23,9 +23,9 @@ namespace TodoListAPI.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult<TokenDto?>> Register(UserCreateDto dto)
         {
-            var response = await _authService.RegisterAsync(dto);
+            var token = await _authService.RegisterAsync(dto);
 
-            return response is null ? BadRequest("Username or Email already exist.") : StatusCode(201, response);
+            return token is null ? BadRequest("Username or Email already exist.") : StatusCode(201,new TokenDto(token));
         }
 
         //POST /api/auth/login
