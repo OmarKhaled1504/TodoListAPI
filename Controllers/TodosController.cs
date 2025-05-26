@@ -70,7 +70,29 @@ namespace TodoListAPI.Controllers
             {
                 return Unauthorized();
             }
+        }
 
+        //PUT /api/todos/1
+        [Authorize]
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(TodoDto), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<TodoDto>> UpdateTodo(int id, TodoCreateDto dto)
+        { try
+            {
+                var response = await _todoService.UpdateTodoAsync(id, dto);
+                return response is null ? NotFound() : Ok(response);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+            catch (Exception ex) when (ex.Message == "Forbidden")
+            {
+                return Forbid();
+            }
         }
 
     }
