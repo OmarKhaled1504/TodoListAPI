@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoListAPI.Data;
+using TodoListAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TodoContext>(options => options.UseMySql(
@@ -11,6 +12,10 @@ builder.Services.AddDbContext<TodoContext>(options => options.UseMySql(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITodoService, TodoService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
